@@ -114,8 +114,8 @@ http://localhost:3000/index.html
 
 ## Screenshot
 
-![Study Streak Tracker SQLite](./screenshot1.png)
-![Study Streak Tracker SQLite](./screenshot2.png)
+![Study Streak Tracker SQLite](screenshots/screenshot1.png)
+![Study Streak Tracker SQLite](screenshots/screenshot2.png)
 
 ---
 
