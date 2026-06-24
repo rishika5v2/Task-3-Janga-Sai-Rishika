@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Streak Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5faf8 0%, #eef6f4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(30, 92, 112, 0.1);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #1e5c70;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            text-align: center;
+            color: #e8736d;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: #1e5c70;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #d4e8e6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e8736d;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #1e5c70;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background: #2a7a8f;
+            transform: translateY(-2px);
+            transition: 0.3s;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #e8736d, transparent);
+            margin: 20px 0;
+        }
+
+        .streak-box {
+            background: linear-gradient(135deg, #1e5c70 0%, #2a7a8f 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .streak-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .streak-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: #f5faf8;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 4px solid #e8736d;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            color: #e8736d;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #1e5c70;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .sessions-list h3 {
+            color: #1e5c70;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .date-group {
+            margin-bottom: 18px;
+        }
+
+        .date-label {
+            color: #e8736d;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .session-item {
+            background: #f5faf8;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #e8736d;
+            font-size: 13px;
+        }
+
+        .session-subject {
+            color: #1e5c70;
+            font-weight: 600;
+        }
+
+        .session-hours {
+            background: #e8736d;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #c41e3a;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 15px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Study Streak</h1>
+        <p class="tagline">Track your daily progress</p>
+
+        <div class="error" id="errorMsg"></div>
+
+        <div class="form-group">
+            <label>Subject</label>
+            <input type="text" id="subject" placeholder="e.g., DSA, Web Dev">
+        </div>
+
+        <div class="form-group">
+            <label>Hours Studied</label>
+            <input type="number" id="hours" placeholder="e.g., 2" min="0.5" step="0.5">
+        </div>
+
+        <button id="addBtn" onclick="addSession()">
+            Add Session
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="streak-box">
+            <div class="streak-number" id="streakNum">0</div>
+            <div class="streak-label">
+                🔥 Days Streak
+            </div>
+            <div style="margin-top:8px;font-size:13px;opacity:.9">
+                Keep the momentum going!
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number" id="todayHours">0</div>
+                <div class="stat-label">Today's Hours</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="bestDay">0</div>
+                <div class="stat-label">Best Day</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="totalHours">0</div>
+                <div class="stat-label">Total Hours</div>
+            </div>
+        </div>
+
+        <div class="sessions-list">
+            <h3>Recent Sessions</h3>
+            <div id="sessionsList" class="empty">No sessions yet. Start studying!</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function addSession() {
+            const subject = document.getElementById('subject').value;
+            const hours = parseFloat(document.getElementById('hours').value);
+            const errorMsg = document.getElementById('errorMsg');
+            const addBtn = document.getElementById('addBtn');
+
+            errorMsg.style.display = 'none';
+
+            if (!subject || !hours) {
+                errorMsg.textContent = '⚠️ Fill in all fields!';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            addBtn.disabled = true;
+            addBtn.textContent = 'Adding...';
+
+            try {
+                const response = await fetch(`${API_URL}/study`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subject, hours })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    addBtn.disabled = false;
+                    addBtn.textContent = 'Add Session';
+
+                    errorMsg.textContent = '⚠️ ' + data.error;
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('subject').value = '';
+                document.getElementById('hours').value = '';
+                addBtn.disabled = false;
+                addBtn.textContent = 'Add Session';
+                loadData();
+                loadStats();
+                loadStreak();
+            } catch (err) {
+                addBtn.disabled = false;
+                addBtn.textContent = 'Add Session';
+
+                errorMsg.textContent = '❌ Cannot connect to API';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function getDateLabel(dateStr) {
+            const date = new Date(dateStr);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (dateStr === today.toISOString().split('T')[0]) return 'Today';
+            if (dateStr === yesterday.toISOString().split('T')[0]) return 'Yesterday';
+            return dateStr;
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(`${API_URL}/study`);
+                const data = await response.json();
+
+                const list = document.getElementById('sessionsList');
+                if (data.sessions.length === 0) {
+                    list.innerHTML = '<div class="empty">No sessions yet. Start studying!</div>';
+                    document.getElementById('todayHours').textContent = '0';
+                    document.getElementById('bestDay').textContent = '0';
+                    document.getElementById('totalHours').textContent = '0';
+                    return;
+                }
+
+                const grouped = {};
+                data.sessions.forEach(s => {
+                    if (!grouped[s.date]) grouped[s.date] = [];
+                    grouped[s.date].push(s);
+                });
+
+                const html = Object.keys(grouped).reverse().map(date => `
+                    <div class="date-group">
+                        <div class="date-label">${getDateLabel(date)}</div>
+                        ${grouped[date].map(s => `
+                            <div class="session-item">
+
+                                <div class="session-subject">
+                                    ${s.subject}
+                                </div>
+
+                                <div style="
+                                    display:flex;
+                                    align-items:center;
+                                    gap:8px;
+                                ">
+
+                                    <div class="session-hours">
+                                        ${s.hours}h
+                                    </div>
+
+                                    <button
+                                        onclick="deleteSession(${s.id})"
+                                        style="
+                                            width:auto;
+                                            margin:0;
+                                            padding:4px 8px;
+                                            background:#dc3545;
+                                            font-size:12px;
+                                        "
+                                    >
+                                        🗑️
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+
+                list.innerHTML = html;
+
+                const today = new Date().toISOString().split('T')[0];
+                const todayTotal = data.sessions
+                    .filter(s => s.date === today)
+                    .reduce((sum, s) => sum + s.hours, 0);
+                document.getElementById('todayHours').textContent = todayTotal;
+
+                const dayMap = {};
+                data.sessions.forEach(s => {
+                    dayMap[s.date] = (dayMap[s.date] || 0) + s.hours;
+                });
+                const bestDay = Math.max(...Object.values(dayMap), 0);
+                document.getElementById('bestDay').textContent = bestDay;
+
+                document.getElementById('totalHours').textContent = data.totalHours;
+            } catch (err) {
+                console.error('Error loading data:', err);
+            }
+        }
+
+        async function loadStreak() {
+            try {
+                const response = await fetch(`${API_URL}/streak`);
+                const data = await response.json();
+                document.getElementById('streakNum').textContent = data.currentStreak;
+            } catch (err) {
+                console.error('Error loading streak:', err);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/study`);
+                const data = await response.json();
+
+                const today = new Date().toISOString().split('T')[0];
+                const todayTotal = data.sessions
+                    .filter(s => s.date === today)
+                    .reduce((sum, s) => sum + s.hours, 0);
+                document.getElementById('todayHours').textContent = todayTotal;
+
+                const dayMap = {};
+                data.sessions.forEach(s => {
+                    dayMap[s.date] = (dayMap[s.date] || 0) + s.hours;
+                });
+                const bestDay = Math.max(...Object.values(dayMap), 0);
+                document.getElementById('bestDay').textContent = bestDay;
+
+                document.getElementById('totalHours').textContent = data.totalHours;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function deleteSession(id) {
+            const confirmDelete = confirm('Delete this session?');
+
+            if (!confirmDelete) return;
+
+            try {
+                await fetch(`${API_URL}/study/${id}`, {
+                    method: 'DELETE'
+                });
+
+                loadData();
+                loadStats();
+                loadStreak();
+            } catch (error) {
+                console.error('Delete failed:', error);
+            }
+        }
+
+        window.onload = () => {
+            loadData();
+            loadStreak();
+            loadStats();
+        };
+    </script>
+</body>
+</html>
