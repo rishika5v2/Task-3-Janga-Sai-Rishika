@@ -2,8 +2,6 @@
 🗄️ Express Backend + SQLite Persistence  
 DecodeLabs Full Stack Development Internship — Project 3: Database Integration
 
-**Live Demo:** [View Live](https://your-github-username.github.io/study-streak-tracker-sqlite)
-
 ---
 
 ## Overview
